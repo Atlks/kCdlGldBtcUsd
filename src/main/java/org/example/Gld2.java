@@ -14,7 +14,7 @@ public class Gld2 {
         try (Playwright playwright = Playwright.create()) {
             BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
             launchOptions.setHeadless(false);
-                    //.setTimeout(30000);
+            //.setTimeout(30000);
             launchOptions.setDevtools(true); // 打开开发者工具，观察渲染状态
             launchOptions.setArgs(Arrays.asList(new String[]{
                     "--enable-webgl",
@@ -32,7 +32,7 @@ public class Gld2 {
                     .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/89.0 Safari/537.36")
                     .setLocale("en-US")
                     .setViewportSize(1280, 720)
-                   // .setExtraHTTPHeaders(headers)
+                    // .setExtraHTTPHeaders(headers)
                     .setTimezoneId("America/New_York");
             BrowserContext context = browser.newContext(newContextOptions
 
@@ -63,13 +63,12 @@ public class Gld2 {
             }
 
 
-
             // Optional: print the title of the page
             System.out.println("Page title: " + page.title());
             // Wait for page content to load (adjust selector as needed)
             page.waitForSelector("h1");
             System.out.println("aftr h1 " + page.title());
-            String ctnBtn="div.backdrop-continue";
+            String ctnBtn = "div.backdrop-continue";
             page.waitForSelector(ctnBtn);
             Locator btn = page.locator(ctnBtn);
             btn.click();
@@ -78,9 +77,9 @@ public class Gld2 {
             // 等待目标 div 加载（最多 60 秒）
             // 等待表格元素出现在页面中
 
-          //  Locator element1 = page.locator("table.chart-markup-table");
-           // element1.waitFor(new Locator.WaitForOptions().setTimeout(12 * 1000));
-            String targtElmt="div#tv-chart-overlay";
+            //  Locator element1 = page.locator("table.chart-markup-table");
+            // element1.waitFor(new Locator.WaitForOptions().setTimeout(12 * 1000));
+            String targtElmt = "div#tv-chart-overlay";
             String selector = "table.chart-markup-table";
             Locator element1 = page.locator(targtElmt);
 

@@ -44,15 +44,14 @@ public class Gld {
             );
 
 
-
             // Create a new page within this context
             Page page = context.newPage();
             // 注入JS，隐藏 navigator.webdriver = true
             page.addInitScript("Object.defineProperty(navigator, 'webdriver', { get: () => undefined });");
 
-          //  addstyle(page);
+            //  addstyle(page);
 
-       //  disabFont(page);
+            //  disabFont(page);
             page.onWebSocket(ws -> {
                 System.out.println("✅ WebSocket 连接成功: " + ws.url());
             });
@@ -66,17 +65,17 @@ public class Gld {
             //
             // https://coinmarketcap.com/currencies/bitcoin/            // Open the CoinMarketCap website
             String url = "https://cn.investing.com/commodities/gold";
-            url="https://cn.investing.com/currencies/xau-usd-candlestick";
+            url = "https://cn.investing.com/currencies/xau-usd-candlestick";
             System.out.println(url);
-          //  page.navigate(url);
+            //  page.navigate(url);
 
-            try{
+            try {
                 page.navigate(url,
                         new Page.NavigateOptions()
                                 .setTimeout(20000)
                                 .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成
-            }catch (Exception e){
-                System.out.println("------------cat e:"+e.getMessage());
+            } catch (Exception e) {
+                System.out.println("------------cat e:" + e.getMessage());
 
                 e.printStackTrace();
                 System.out.println("-----------end catex");
@@ -105,14 +104,12 @@ public class Gld {
             // Wait for the tab to be available and click it
 
 
-
             // 2. Wait for the element to appear
             // 等待目标 div 加载（最多 60 秒）
             Locator element1 = page.locator("div#js_instrument_chart");
-            element1.waitFor(new Locator.WaitForOptions().setTimeout(9*1000));
+            element1.waitFor(new Locator.WaitForOptions().setTimeout(9 * 1000));
             System.out.println("targe elmt showed");
-          //  page.waitForFunction("() => document.querySelector('canvas') && document.querySelector('canvas').clientHeight > 0");
-
+            //  page.waitForFunction("() => document.querySelector('canvas') && document.querySelector('canvas').clientHeight > 0");
 
 
             // 3. Take screenshot of that element
@@ -156,10 +153,10 @@ public class Gld {
     private static void addstyle(Page page) {
         // 注入字体策略 CSS
         page.addStyleTag(new Page.AddStyleTagOptions().setContent("""
-    * {
-        font-display: swap !important;
-    }
-"""));
+                    * {
+                        font-display: swap !important;
+                    }
+                """));
 //        page.addStyleTag(new Page.AddStyleTagOptions().setContent("""
 //* {
 //    font-display: swap !important;
