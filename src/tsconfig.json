@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "strict": true,            // 一键开启所有严格选项
+    "strictNullChecks": true   // 单独开启 null 安全检查
+  }
+}
