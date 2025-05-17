@@ -36,7 +36,7 @@ public class OpenCoinMarketCap {
         log.info(" fun getBytesPicFrmCrptsite");
         Page page = browser.newPage();
 
-        //
+        log.info("aft newpage()");
         // https://coinmarketcap.com/currencies/bitcoin/            // Open the CoinMarketCap website
 
         page.navigate("https://coinmarketcap.com/currencies/" + currencies + "/");
@@ -99,8 +99,10 @@ public class OpenCoinMarketCap {
     }
 
     private static Browser getBrowser4crp() {
+        log.info("fun getBrowser4crp");
         Playwright playwright = Playwright.create();
         Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        log.info("endfun getBrowser4crp");
         return browser;
     }
 
