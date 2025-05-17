@@ -53,7 +53,7 @@ public class Gld2 {
             try {
                 page.navigate(url,
                         new Page.NavigateOptions()
-                                .setTimeout(20000)
+                                .setTimeout(10000)
                                 .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成
             } catch (Throwable e) {
                 System.out.println("------------cat e:" + e.getMessage());
@@ -63,12 +63,16 @@ public class Gld2 {
             }
 
 
+
             // Optional: print the title of the page
             System.out.println("Page title: " + page.title());
             // Wait for page content to load (adjust selector as needed)
             page.waitForSelector("h1");
             System.out.println("aftr h1 " + page.title());
-
+            String ctnBtn="div.backdrop-continue";
+            page.waitForSelector(ctnBtn);
+            Locator btn = page.locator(ctnBtn);
+            btn.click();
 
             // 2. Wait for the element to appear
             // 等待目标 div 加载（最多 60 秒）
