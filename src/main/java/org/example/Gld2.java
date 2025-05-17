@@ -54,7 +54,7 @@ public class Gld2 {
                 page.navigate(url,
                         new Page.NavigateOptions()
                                 .setTimeout(10000)
-                                .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成
+                                .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成..
             } catch (Throwable e) {
                 System.out.println("------------cat e:" + e.getMessage());
 
