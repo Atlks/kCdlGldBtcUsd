@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class OpenCoinMarketCap {
-    private static final Logger log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
+    private static   Logger log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
 
     public static Browser browser4crp = getBrowser4crp();
 
@@ -99,6 +99,7 @@ public class OpenCoinMarketCap {
     }
 
     private static Browser getBrowser4crp() {
+          log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
         System.out.println(log);
         log.info("fun getBrowser4crp");
         Playwright playwright = Playwright.create();
