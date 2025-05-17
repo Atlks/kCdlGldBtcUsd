@@ -13,10 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class OpenCoinMarketCap {
-
+    private static final Logger log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
 
     public static Browser browser4crp = getBrowser4crp();
-    private static final Logger log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
+
     public static void main(String[] args) throws IOException, InterruptedException {
         String currencies = "bitcoin";
         byte[] imageBytes = null;
@@ -99,6 +99,7 @@ public class OpenCoinMarketCap {
     }
 
     private static Browser getBrowser4crp() {
+        System.out.println(log);
         log.info("fun getBrowser4crp");
         Playwright playwright = Playwright.create();
         Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
