@@ -74,8 +74,12 @@ public class Gld2 {
             // 等待目标 div 加载（最多 60 秒）
             // 等待表格元素出现在页面中
 
-            Locator element1 = page.locator("table.chart-markup-table");
+          //  Locator element1 = page.locator("table.chart-markup-table");
            // element1.waitFor(new Locator.WaitForOptions().setTimeout(12 * 1000));
+            String targtElmt="div#tv-chart-overlay";
+            String selector = "table.chart-markup-table";
+            Locator element1 = page.locator(targtElmt);
+
             Thread.sleep(9 * 1000); // 10 secon
             System.out.println("targe elmt showed");
             //  page.waitForFunction("() => document.querySelector('canvas') && document.querySelector('canvas').clientHeight > 0");
