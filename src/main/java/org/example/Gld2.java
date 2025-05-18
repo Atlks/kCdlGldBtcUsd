@@ -1,31 +1,38 @@
 package org.example;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.WaitUntilState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
-import java.util.Arrays;
 
 import static org.example.BotBroswer.*;
 import static org.example.OpenCoinMarketCap.*;
+import static org.example.Wbsvr.iniLogCfg;
 
 public class Gld2 {
-    public static void main(String[] args) {
-        String url = "https://www.cashbackforex.com/chart?s=XAU.USD-30m";
+    public static Logger log;
+    public static void main(String[] args) throws InterruptedException {
+        String url = "https://www.cashbackforex.com/chart?s=XAU.USD";
+        iniLogCfg();
+        log = LoggerFactory.getLogger(Gld2.class);
         System.out.println(url);
+        log.info(url);
 
-        try (Playwright playwright = Playwright.create()) {
 
-            Browser browser = getBrowser4canvas();
 
-            Browser.NewContextOptions options = getNewContextOptions4mobileSite();
+            Browser browser = getBrowser4disabGpu();
+log.info("aft getBrowser4canvas");
+          //  Browser.NewContextOptions options = getNewContextOptions4mobileSite();
+
 
         //  BrowserContext context = browser.newContext(options);
             //dis font media,can fast scrsht
            BrowserContext context =   getBrowserContextFastOptmz(browser);
-
+        log.info("aft getBrowserContextFastOptmz");
             // Create a new page within this context
             Page page = context.newPage();
+        log.info("aft new page");
             // 注入JS，隐藏 navigator.webdriver = true
             page.addInitScript("Object.defineProperty(navigator, 'webdriver', { get: () => undefined });");
 
@@ -70,29 +77,46 @@ public class Gld2 {
             String   targtElmt = "table.chart-markup-table";
 
             targtElmt="iframe.tradingview_f44bc";
-            Thread.sleep(300);
+        //    Thread.sleep(300);
            // letVisab(page);
 
             //  targtElmt="div.chart-gui-wrapper";
           //  targtElmt="div.chart-container-border";
-            Locator element1 = page.locator(targtElmt);
-            System.out.println("element1.isVisible:"+element1.isVisible());
+        String selector = "div#close";
+        clickx(selector,page);
+        page.evaluate("() => {" +
+                "  document.querySelectorAll('iframe[src*=\"accounts.google.com\"]').forEach(el => el.style.display = 'none');" +
+                "}");
+   Thread.sleep(300);
+        page.evaluate("() => {" +
+                "  const iframe = document.getElementById('credential_picker_iframe');" +
+                "  if (iframe) {" +
+                "    iframe.remove();" +
+                "  }" +
+                "}");
+
            // element1.waitFor(new Locator.WaitForOptions().setTimeout(9 * 1000));
-           Thread.sleep(3 * 1000); // 10 secon
+        //   Thread.sleep(3 * 1000); // 10 secon
             System.out.println("targe elmt showed");
             //  page.waitForFunction("() => document.querySelector('canvas') && document.querySelector('canvas').clientHeight > 0");
 
 
             // 3. Take screenshot of that element
-            System.out.println("start   save pic...");
+            log.info("start   save pic...");
             mkdir("pics");
-            String gldpic = "pics/cmdt" + System.currentTimeMillis() + ".png";
+            String picpath
+                    = "pics/cmdt" + System.currentTimeMillis() + ".png";
 
-            Locator iframeLocator = page.locator("iframe[id^='tradingview_']");
-            iframeLocator.waitFor(); // 等待 iframe 出现
+            Locator chartBlock = page.locator("iframe[id^='tradingview_']");
+            chartBlock.waitFor(); // 等待 iframe 出现
+        Thread.sleep(3 * 1000);
 
-            iframeLocator.screenshot(new Locator.ScreenshotOptions()
-                    .setPath(Paths.get("iframe-chart.png")));
+        byte[] imageBytes = chartBlock.screenshot();
+        //
+        Thread.startVirtualThread(() -> {
+            save2file(imageBytes,picpath);
+            //  page.close();
+        });
          //  element1.screenshot(new Locator.ScreenshotOptions().setPath(Paths.get(gldpic)));
 
         //  scrshtByElmtHdlr(page, gldpic);
@@ -103,8 +127,15 @@ public class Gld2 {
             // Keep browser open for a while to see the page
             Thread.sleep(3000 * 1000); // 10 seconds
 
-        } catch (Exception e) {
-            e.printStackTrace();
+
+    }
+
+    private static void clickx(String selector, Page page) {
+        Locator element1 = page.locator(selector);
+        //  System.out.println("element1.isVisible:"+element1.isVisible());
+     //   element1.waitFor(new Locator.WaitForOptions().setTimeout(3 * 1000));
+        if(element1!=null&&  element1.isVisible()){
+            element1.click();
         }
     }
 
