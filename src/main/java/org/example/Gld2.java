@@ -58,6 +58,7 @@ public class Gld2 {
             Locator btn = page.locator(ctnBtn);
            // btn.waitFor();
             btn.click();
+          //  page.waitForSelector("canvas");
 
             // 2. Wait for the element to appear
             // 等待目标 div 加载（最多 60 秒）
@@ -68,12 +69,9 @@ public class Gld2 {
          //   String targtElmt = "div#tv-chart-overlay";
             String   targtElmt = "table.chart-markup-table";
 
-            page.evaluate("() => {" +
-                    "  const el = document.querySelector('table.chart-markup-table');" +
-                    "  if (el) el.scrollIntoView();" +
-                    "}");
+            targtElmt="iframe.tradingview_f44bc";
             Thread.sleep(300);
-            letVisab(page);
+           // letVisab(page);
 
             //  targtElmt="div.chart-gui-wrapper";
           //  targtElmt="div.chart-container-border";
@@ -89,9 +87,15 @@ public class Gld2 {
             System.out.println("start   save pic...");
             mkdir("pics");
             String gldpic = "pics/cmdt" + System.currentTimeMillis() + ".png";
-            element1.screenshot(new Locator.ScreenshotOptions().setPath(Paths.get(gldpic)));
 
-        //    scrshtByElmtHdlr(page, gldpic);
+            Locator iframeLocator = page.locator("iframe[id^='tradingview_']");
+            iframeLocator.waitFor(); // 等待 iframe 出现
+
+            iframeLocator.screenshot(new Locator.ScreenshotOptions()
+                    .setPath(Paths.get("iframe-chart.png")));
+         //  element1.screenshot(new Locator.ScreenshotOptions().setPath(Paths.get(gldpic)));
+
+        //  scrshtByElmtHdlr(page, gldpic);
 
             System.out.println("Screenshot saved as chart-element.png");
 
