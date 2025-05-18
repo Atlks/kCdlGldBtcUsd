@@ -14,7 +14,8 @@ import java.util.*;
 
 import static org.example.BotBroswer.*;
 import static org.example.OpenCoinMarketCap.*;
-import static org.example.Wbsvr.iniLogCfg;
+import static org.example.Util.iniLogCfg;
+
 
 //https://cn.investing.com/commodities/gold
 public class FrnExch {

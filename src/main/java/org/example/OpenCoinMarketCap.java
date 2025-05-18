@@ -18,14 +18,15 @@ import java.util.List;
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static org.example.BotBroswer.getBrowser4disabGpu;
 import static org.example.BotBroswer.nvgt;
-import static org.example.Wbsvr.iniLogCfg;
+import static org.example.Util.iniLogCfg;
+
 
 public class OpenCoinMarketCap {
 
     static {
         iniLogCfg();
     }
-    public static   Logger log ;
+    public static   Logger log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
     public static Browser browser4crp = getBrowser4disabGpu();
 
     public static void main(String[] args) throws IOException, InterruptedException {
@@ -60,8 +61,9 @@ public class OpenCoinMarketCap {
 
     }
 
-    static byte[] getBytesFrmPage4crpt(String url, Page page) {
-
+    static byte[] getBytesFrmPage4crpt(String url, Page page) throws InterruptedException {
+        iniLogCfg();
+        log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
         nvgt(url, page);
 
         // Wait for the main element to load
@@ -97,8 +99,12 @@ public class OpenCoinMarketCap {
         Locator chartBlock = page.locator("div[data-sxn='chart-content-block']");
         chartBlock.waitFor();
         log.info("aft chartBlock  show");
-        page.waitForSelector("rect");
-        page.waitForSelector("g");
+        String rect = "rect";
+       // page.waitForSelector(rect);
+        waitforInDomAttched(rect,page);
+
+      //  page.waitForSelector("g");
+        waitforInDomAttched("g",page);
 
         mkdir("pics");
         // 截图这个div元素
@@ -111,6 +117,7 @@ public class OpenCoinMarketCap {
 
 
         log.info("aft chartBlock  visibale ok");
+        Thread.sleep(3000);
         byte[] imageBytes = chartBlock.screenshot();
         //
         Thread.startVirtualThread(() -> {
@@ -122,6 +129,17 @@ public class OpenCoinMarketCap {
         return imageBytes;
     }
 
+    private static void waitforInDomAttched(String rect, Page page) {
+        try{
+            Locator  locator= page.locator(rect);
+            locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED));
+        } catch (Exception e) {
+            System.out.println("---cat e--if mlt elmts");
+            System.out.println(e.getMessage());
+            System.out.println("---endcat e");
+        }
+
+    }
 
 
     @NotNull

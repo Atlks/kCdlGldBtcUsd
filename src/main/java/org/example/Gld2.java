@@ -1,6 +1,7 @@
 package org.example;
 
 import com.microsoft.playwright.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +9,8 @@ import java.nio.file.Paths;
 
 import static org.example.BotBroswer.*;
 import static org.example.OpenCoinMarketCap.*;
-import static org.example.Wbsvr.iniLogCfg;
+import static org.example.Util.iniLogCfg;
+
 
 public class Gld2 {
     public static Logger log;
@@ -20,15 +22,7 @@ public class Gld2 {
         log.info(url);
 
 
-
-            Browser browser = getBrowser4disabGpu();
-log.info("aft getBrowser4canvas");
-          //  Browser.NewContextOptions options = getNewContextOptions4mobileSite();
-
-
-        //  BrowserContext context = browser.newContext(options);
-            //dis font media,can fast scrsht
-           BrowserContext context =   getBrowserContextFastOptmz(browser);
+        BrowserContext context = getBrowserContextFast();
         log.info("aft getBrowserContextFastOptmz");
             // Create a new page within this context
             Page page = context.newPage();
@@ -129,6 +123,8 @@ log.info("aft getBrowser4canvas");
 
 
     }
+
+
 
     private static void clickx(String selector, Page page) {
         Locator element1 = page.locator(selector);

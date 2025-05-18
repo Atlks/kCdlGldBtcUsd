@@ -16,25 +16,21 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static org.example.BotBroswer.getBrowser4disabGpu;
+import static org.example.BotBroswer.getBrowserContextFast;
+
 import static org.example.OpenCoinMarketCap.*;
+import static org.example.Util.iniLogCfg;
 
 public class Wbsvr {
-
+    private static   Logger log ;
     static {
         iniLogCfg();
+        log = LoggerFactory.getLogger(Wbsvr.class);
     }
+    public  static BrowserContext context = getBrowserContextFast();
 
-    static void iniLogCfg() {
-        // 设置 slf4j-simple 的日志配置
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
-        System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
-        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat", "yyyy-MM-dd HH:mm:ss");
-        System.setProperty("org.slf4j.simpleLogger.showThreadName", "true");
-        System.setProperty("org.slf4j.simpleLogger.showLogName", "true");       // 全类名
-        System.setProperty("org.slf4j.simpleLogger.showShortLogName", "false"); // 短类名
-    }
 
-    private static final Logger log = LoggerFactory.getLogger(Wbsvr.class);
+
 
     //        Handler hdl2crp = ctx -> {
 //
@@ -43,9 +39,11 @@ public class Wbsvr {
     static LoadingCache<String, Page> cachePage;
     static LoadingCache<String, byte[]> cache;
     public static void main(String[] args) {
+        iniLogCfg();
+        Wbsvr. log = LoggerFactory.getLogger(Wbsvr.class);
         iniImgCache();
 
-        iniCachePage();
+    //    iniCachePage();
 
         Javalin app = Javalin.create().start(8888);
 
@@ -63,7 +61,7 @@ public class Wbsvr {
         String cacheName = "imgCache";
         cache = CacheBuilder.newBuilder()
                 .maximumSize(999)  // 最多缓存100个条目
-                .expireAfterWrite(1, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
+                .expireAfterWrite(120, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
                 .removalListener(notification ->
                         System.out.println("移除缓存frm imgcache: " + notification.getKey() + " -> " + notification.getCause())
                 )
@@ -73,7 +71,7 @@ public class Wbsvr {
                         // 模拟从数据库或外部系统加载数据
                        log.info(cacheName+"加载数据start：" + url);
 
-                        Page page=cachePage.get(url);
+                        Page page=context.newPage();
                         byte[] imageBytes = getBytesFrmPage4crpt(url, page);
                         log.info(cacheName+"加载数据finish： key=" + url);
                         return imageBytes;

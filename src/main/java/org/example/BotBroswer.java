@@ -1,16 +1,17 @@
 package org.example;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitUntilState;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import static org.example.OpenCoinMarketCap.getBrowserContextFastOptmz;
+import static org.example.Util.iniLogCfg;
 
 public class BotBroswer {
     private static Logger log ;
@@ -20,9 +21,15 @@ public class BotBroswer {
     }
 
     public static Browser getBrowser4disabGpu() {
-        log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
+        iniLogCfg();
+
+        // 设置 slf4j-simple 的日志配置
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
+        System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
+        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat", "yyyy-MM-dd HH:mm:ss");
+        BotBroswer. log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
         System.out.println(log);
-        log.info("fun getBrowser4disabGpu");
+        BotBroswer.  log.info("funx getBrowser4disabGpu");
         Playwright playwright = Playwright.create();
         BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(false);
         options.setArgs(List.of(
@@ -62,7 +69,20 @@ public class BotBroswer {
         log.info("endfun getBrowser4crp");
         return browser;
     }
+    @NotNull
+    public  static BrowserContext getBrowserContextFast() {
+        iniLogCfg();
+        BotBroswer.  log= LoggerFactory.getLogger(BotBroswer.class);
+        Browser browser = getBrowser4disabGpu();
+        BotBroswer.  log.info("aft getBrowser4canvas");
+        //  Browser.NewContextOptions options = getNewContextOptions4mobileSite();
 
+
+        //  BrowserContext context = browser.newContext(options);
+        //dis font media,can fast scrsht
+        BrowserContext context =   getBrowserContextFastOptmz(browser);
+        return context;
+    }
     public  static Browser getBrowser4canvas() {
         log = LoggerFactory.getLogger(BotBroswer.class);
         System.out.println(log);
