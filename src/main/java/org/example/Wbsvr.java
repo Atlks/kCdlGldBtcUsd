@@ -9,11 +9,14 @@ import io.javalin.Javalin;
 import io.javalin.config.JavalinConfig;
 import io.javalin.http.Context;
 import io.javalin.http.Header;
+import io.javalin.http.UploadedFile;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +63,31 @@ public class Wbsvr {
         app.get("/screenshotCrpt", Wbsvr::hdl2crp);
         app.get("/screenshotGld", Wbsvr::hdl2gld);
 
+        app.post("/upload", ctx -> {
+            // 读取文本框中的保存文件名
+            String saveName = ctx.formParam("savename");
+            if (saveName == null || saveName.isBlank()) {
+                ctx.status(400).result("Missing savename");
+                return;
+            }
 
+            // 获取上传的文件
+            UploadedFile uploadedFile = ctx.uploadedFile("file");
+            if (uploadedFile == null) {
+                ctx.status(400).result("No file uploaded");
+                return;
+            }
+
+            // 保存到目标路径
+            File targetFile = new File("uploads/" + saveName);
+            try {
+                Files.createDirectories(targetFile.getParentFile().toPath()); // 确保目录存在
+                Files.copy(uploadedFile.content(), targetFile.toPath());
+                ctx.result("File saved as: " + saveName);
+            } catch (IOException e) {
+                ctx.status(500).result("Failed to save file: " + e.getMessage());
+            }
+        });
 
     }
 
