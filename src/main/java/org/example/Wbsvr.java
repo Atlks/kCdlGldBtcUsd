@@ -29,14 +29,14 @@ import static org.example.OpenCoinMarketCap.*;
 import static org.example.Util.iniLogCfg;
 
 public class Wbsvr {
-    private static   Logger log ;
+    private static Logger log;
+
     static {
         iniLogCfg();
         log = LoggerFactory.getLogger(Wbsvr.class);
     }
-    public  static BrowserContext context = getBrowserContextFast();
 
-
+    public static BrowserContext context = getBrowserContextFast();
 
 
     //        Handler hdl2crp = ctx -> {
@@ -45,14 +45,15 @@ public class Wbsvr {
 //        };
     static LoadingCache<String, Page> cachePage;
     static LoadingCache<String, byte[]> cache;
+
     public static void main(String[] args) {
         iniLogCfg();
-        Wbsvr. log = LoggerFactory.getLogger(Wbsvr.class);
+        Wbsvr.log = LoggerFactory.getLogger(Wbsvr.class);
         iniImgCache();
 
-    //    iniCachePage();
+        //    iniCachePage();
 
-       // Javalin app = Javalin.create().start(8888);
+        // Javalin app = Javalin.create().start(8888);
 
         Javalin app = Javalin.create(getJavalinConfigCrossdmain()).start(8888);
         setCrsdmnOptionHdl(app);
@@ -60,7 +61,7 @@ public class Wbsvr {
 
         // http://13.212.95.142:8888/screenshotCrpt?currencies=bitcoin
         // http://127.0.0.1:8888/screenshotCrpt?currencies=bitcoin
-        app.get("/screenshotCrpt", Wbsvr::hdl2crp);
+        app.get("/screenshotK", Wbsvr::hdl2crp);
         app.get("/screenshotGld", Wbsvr::hdl2gld);
 
         app.post("/upload", ctx -> {
@@ -126,14 +127,27 @@ public class Wbsvr {
                     @Override
                     public byte[] load(String url) throws Exception {
                         // 模拟从数据库或外部系统加载数据
-                       log.info(cacheName+"加载数据start：" + url);
+                        log.info(cacheName + "加载数据start：" + url);
 
-                        Page page=context.newPage();
-                        byte[] imageBytes = getBytesFrmPage4crpt(url, page);
-                        log.info(cacheName+"加载数据finish： key=" + url);
+                        Page page = context.newPage();
+                        byte[] imageBytes = getBytesFrmUrl(url, page);
+                        log.info(cacheName + "加载数据finish： key=" + url);
                         return imageBytes;
                     }
                 });
+    }
+
+    private static byte[] getBytesFrmUrl(String url, Page page) throws InterruptedException {
+        byte[] imageBytes;
+        if (url.contains("coinmarketcap"))
+            imageBytes = getBytesFrmPage4crpt(url, page);
+        else if (url.contains("baidu.com"))
+            imageBytes = FrnExch.getImgBytes(url, page);
+        else if (url.contains("cashbackforex"))
+            imageBytes = Gld2.getImgBytes(url, page);
+       else
+            imageBytes = getBytesFrmPage4crpt(url, page);
+        return imageBytes;
     }
 
 //    private static void handleOptions(@NotNull HttpExchange exchange) throws Exception {
@@ -141,7 +155,8 @@ public class Wbsvr {
 //        exchange.getResponseHeaders().add("Allow", "GET, POST, PUT, DELETE, OPTIONS");
 //
 //
-////返回状态码 204（无内容）是标准做法。
+
+    /// /返回状态码 204（无内容）是标准做法。
 //        exchange.sendResponseHeaders(204, -1); // No Content
 //        exchange.close();
 //    }
@@ -160,19 +175,19 @@ public class Wbsvr {
                 .removalListener(notification ->
                         // cache.cleanUp() 主动触发清理。
                         //timer clearup just ok
-                        System.out.println(cacheName+"移除缓存: " + notification.getKey() + " -> " + notification.getCause())
+                        System.out.println(cacheName + "移除缓存: " + notification.getKey() + " -> " + notification.getCause())
                 )
-                .build(new CacheLoader<String,Page>() {
+                .build(new CacheLoader<String, Page>() {
                     @Override
                     public Page load(String k) throws Exception {
                         // 模拟从数据库或外部系统加载数据
-                        log.info(cacheName+"加载数据start：" + k);
-                        Page pg ;
-                        if(k.contains("coinmarketcap"))
-                          pg =  getPage4crp();
+                        log.info(cacheName + "加载数据start：" + k);
+                        Page pg;
+                        if (k.contains("coinmarketcap"))
+                            pg = getPage4crp();
                         else
-                            pg=getPage4gld();
-                        log.info(cacheName+"加载数据finish： key=" + k);
+                            pg = getPage4gld();
+                        log.info(cacheName + "加载数据finish： key=" + k);
                         return pg;
                     }
                 });
@@ -189,17 +204,16 @@ public class Wbsvr {
     }
 
     public static void hdl2crp(Context ctx) throws IOException, InterruptedException, ExecutionException {
-        String currencies = ctx.queryParam("currencies");
+        String url = ctx.queryParam("url");
 
 
-
-                //readPic("C:\\Users\\Administrator\\IdeaProjects\\kCandlPrj\\gld1747480497886.png");
+        //readPic("C:\\Users\\Administrator\\IdeaProjects\\kCandlPrj\\gld1747480497886.png");
         //
 
 
         ctx.contentType("image/png");
-        assert currencies != null;
-        String url = "https://coinmarketcap.com/currencies/" + currencies + "/";
+        assert url != null;
+        //    String url = "https://coinmarketcap.com/currencies/" + url + "/";
         ctx.result(cache.get(url));
 //        String base64Image = Base64.getEncoder().encodeToString(imageBytes);
 //
