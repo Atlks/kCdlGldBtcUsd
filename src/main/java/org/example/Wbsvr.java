@@ -15,6 +15,7 @@ import java.util.Base64;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static org.example.BotBroswer.getBrowser4disabGpu;
 import static org.example.OpenCoinMarketCap.*;
 
 public class Wbsvr {
@@ -73,7 +74,7 @@ public class Wbsvr {
                        log.info(cacheName+"加载数据start：" + url);
 
                         Page page=cachePage.get(url);
-                        byte[] imageBytes = getBytesFrmPage(url, page);
+                        byte[] imageBytes = getBytesFrmPage4crpt(url, page);
                         log.info(cacheName+"加载数据finish： key=" + url);
                         return imageBytes;
                     }
@@ -110,7 +111,7 @@ public class Wbsvr {
     }
 
     private static Page getPage4crp() {
-        BrowserContext context = getBrowserContextFastOptmz(getBrowser4crp());
+        BrowserContext context = getBrowserContextFastOptmz(getBrowser4disabGpu());
         Page page = context.newPage();
         return page;
     }

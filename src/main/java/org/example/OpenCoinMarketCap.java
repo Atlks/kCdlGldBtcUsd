@@ -1,7 +1,6 @@
 package org.example;
 
 import com.microsoft.playwright.*;
-import com.microsoft.playwright.options.LoadState;
 import com.microsoft.playwright.options.WaitForSelectorState;
 import com.microsoft.playwright.options.WaitUntilState;
 import org.jetbrains.annotations.NotNull;
@@ -17,14 +16,16 @@ import java.nio.file.Paths;
 import java.util.List;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
+import static org.example.BotBroswer.getBrowser4disabGpu;
 import static org.example.Wbsvr.iniLogCfg;
 
 public class OpenCoinMarketCap {
 
     static {
         iniLogCfg();
-    } private static   Logger log ;
-    public static Browser browser4crp = getBrowser4crp();
+    }
+    public static   Logger log ;
+    public static Browser browser4crp = getBrowser4disabGpu();
 
     public static void main(String[] args) throws IOException, InterruptedException {
         iniLogCfg();
@@ -54,14 +55,13 @@ public class OpenCoinMarketCap {
         log.info("aft newpage()");
         // https://coinmarketcap.com/currencies/bitcoin/            // Open the CoinMarketCap website
         String url = "https://coinmarketcap.com/currencies/" + currencies + "/";
-        return getBytesFrmPage(url, page);
+        return getBytesFrmPage4crpt(url, page);
 
     }
 
-    static byte[] getBytesFrmPage(String url, Page page) {
+    static byte[] getBytesFrmPage4crpt(String url, Page page) {
 
-        page.navigate(url,new Page.NavigateOptions()
-                .setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
+        nvgt(url, page);
 
         // Wait for the main element to load
 //            page.waitForSelector("div[class*='cmc-homepage']");
@@ -121,24 +121,33 @@ public class OpenCoinMarketCap {
         return imageBytes;
     }
 
+    static void nvgt(String url, Page page) {
+        page.navigate(url,new Page.NavigateOptions()
+                .setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
+    }
+
+
     @NotNull
     static BrowserContext getBrowserContextFastOptmz(Browser browser) {
         //use playwright 1.48
         // 获取内置的 iPhone 12 设备配置
 
-        Browser.NewContextOptions options = new Browser.NewContextOptions()
-                .setViewportSize(390, 844)  // iPhone 12 分辨率
-                .setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) " +
-                        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1")
-                .setDeviceScaleFactor(3.0)
-                .setIsMobile(true)
-                .setHasTouch(false) .setIgnoreHTTPSErrors(true)
-                .setBypassCSP(true)   //disable scury
-                ;
+        Browser.NewContextOptions options = getNewContextOptions4mobileSite();
 
         BrowserContext context = browser.newContext(options);
 
         //disable pic font media
+        return getBrowserContextDisableImgMedia(context);
+    }
+
+
+    /**
+     * fotn laod soluthong  ，disale font is ok
+     * @param context
+     * @return
+     */
+    @NotNull
+    private static BrowserContext getBrowserContextDisableImgMedia(BrowserContext context) {
         context.route("**/*", route -> {
             String resourceType = route.request().resourceType();
             if (resourceType.equals("image") ||  resourceType.equals("font") || resourceType.equals("media")) {
@@ -148,6 +157,19 @@ public class OpenCoinMarketCap {
             }
         });
         return context;
+    }
+
+    static Browser.NewContextOptions getNewContextOptions4mobileSite() {
+        Browser.NewContextOptions options = new Browser.NewContextOptions()
+                .setViewportSize(390, 844)  // iPhone 12 分辨率
+                .setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) " +
+                        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1")
+                .setDeviceScaleFactor(3.0)
+                .setIsMobile(true)
+                .setHasTouch(false) .setIgnoreHTTPSErrors(true)
+                .setBypassCSP(true)   //disable scury
+                ;
+        return options;
     }
 
     private static void waitForSelectorX(String selector, Page page) {
@@ -165,7 +187,7 @@ public class OpenCoinMarketCap {
         log.info("end start wait for " + selector);
     }
 
-    private static void save2file(byte[] imageBytes, String picpath) {try {
+    public static void save2file(byte[] imageBytes, String picpath) {try {
         // 确保目标目录存在
         Files.createDirectories(Paths.get(picpath).getParent());
 
@@ -206,30 +228,9 @@ public class OpenCoinMarketCap {
         System.out.println("截图完成，已保存为 chart-content.png");
     }
 
-    static Browser getBrowser4crp() {
-          log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
-        System.out.println(log);
-        log.info("fun getBrowser4crp");
-        Playwright playwright = Playwright.create();
-        BrowserType.LaunchOptions options = new BrowserType.LaunchOptions().setHeadless(false);
-        options.setArgs(List.of(
-                "--disable-blink-features=AutomationControlled",
-                "--disable-gpu",
-                "--no-sandbox",
-                "--disable-dev-shm-usage"
-        ));
-        Browser browser = playwright.chromium().launch(options);
-        log.info("endfun getBrowser4crp");
-        return browser;
-    }
 
-    private static Browser getBrowser4gld() {
-        Playwright playwright = Playwright.create();
-        Browser browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-        return browser;
-    }
 
-    private static void mkdir(String picsPath) {
+    static void mkdir(String picsPath) {
         Path path = Paths.get(picsPath);
         if (!Files.exists(path)) {
             try {
