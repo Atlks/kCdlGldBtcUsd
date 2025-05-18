@@ -131,7 +131,7 @@ public class OpenCoinMarketCap {
 
     private static void waitforInDomAttched(String rect, Page page) {
         try{
-            Locator  locator= page.locator(rect);
+            Locator  locator= page.locator(rect).first();
             locator.waitFor(new Locator.WaitForOptions().setState(WaitForSelectorState.ATTACHED));
         } catch (Exception e) {
             System.out.println("---cat e--if mlt elmts");
