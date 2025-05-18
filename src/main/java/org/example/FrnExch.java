@@ -12,8 +12,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.*;
 
-import static org.example.BotBroswer.getBrowser4canvas;
-import static org.example.BotBroswer.getBrowser4disabGpu;
+import static org.example.BotBroswer.*;
 import static org.example.OpenCoinMarketCap.*;
 import static org.example.Wbsvr.iniLogCfg;
 

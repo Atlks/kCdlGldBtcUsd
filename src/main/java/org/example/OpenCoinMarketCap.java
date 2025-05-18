@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static org.example.BotBroswer.getBrowser4disabGpu;
+import static org.example.BotBroswer.nvgt;
 import static org.example.Wbsvr.iniLogCfg;
 
 public class OpenCoinMarketCap {
@@ -121,10 +122,6 @@ public class OpenCoinMarketCap {
         return imageBytes;
     }
 
-    static void nvgt(String url, Page page) {
-        page.navigate(url,new Page.NavigateOptions()
-                .setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
-    }
 
 
     @NotNull
@@ -164,7 +161,7 @@ public class OpenCoinMarketCap {
                 .setViewportSize(390, 844)  // iPhone 12 分辨率
                 .setUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) " +
                         "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1")
-                .setDeviceScaleFactor(3.0)
+                .setDeviceScaleFactor(1.0)
                 .setIsMobile(true)
                 .setHasTouch(false) .setIgnoreHTTPSErrors(true)
                 .setBypassCSP(true)   //disable scury

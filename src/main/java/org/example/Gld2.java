@@ -6,38 +6,23 @@ import com.microsoft.playwright.options.WaitUntilState;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+import static org.example.BotBroswer.*;
+import static org.example.OpenCoinMarketCap.*;
+
 public class Gld2 {
     public static void main(String[] args) {
         String url = "https://www.cashbackforex.com/chart?s=XAU.USD-30m";
         System.out.println(url);
 
         try (Playwright playwright = Playwright.create()) {
-            BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions();
-            launchOptions.setHeadless(false);
-            //.setTimeout(30000);
-            launchOptions.setDevtools(true); // 打开开发者工具，观察渲染状态
-            launchOptions.setArgs(Arrays.asList(new String[]{
-                    "--enable-webgl",
-                    "--ignore-gpu-blocklist",
-                    "--disable-web-security",
-                    "--use-gl=desktop",
-                    "--disable-blink-features=AutomationControlled"
-            }));
-            Browser browser = playwright.chromium().launch(
-                    launchOptions);
 
+            Browser browser = getBrowser4canvas();
 
-            // Create a context with a custom user agent (Firefox user agent)
-            Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
-                    .setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Firefox/89.0 Safari/537.36")
-                    .setLocale("en-US")
-                    .setViewportSize(1280, 720)
-                    // .setExtraHTTPHeaders(headers)
-                    .setTimezoneId("America/New_York");
-            BrowserContext context = browser.newContext(newContextOptions
+            Browser.NewContextOptions options = getNewContextOptions4mobileSite();
 
-            );
-
+        //  BrowserContext context = browser.newContext(options);
+            //dis font media,can fast scrsht
+           BrowserContext context =   getBrowserContextFastOptmz(browser);
 
             // Create a new page within this context
             Page page = context.newPage();
@@ -49,18 +34,18 @@ public class Gld2 {
             //  disabFont(page);
             addWbsktMntr(page);
 
-
-            try {
-                page.navigate(url,
-                        new Page.NavigateOptions()
-                                .setTimeout(10000)
-                                .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成..
-            } catch (Throwable e) {
-                System.out.println("------------cat e:" + e.getMessage());
-
-                e.printStackTrace();
-                System.out.println("-----------end catex");
-            }
+            nvgt(url,page);
+//            try {
+//                page.navigate(url,
+//                        new Page.NavigateOptions()
+//                                .setTimeout(10000)
+//                                .setWaitUntil(WaitUntilState.NETWORKIDLE)); // 页面空闲时认为加载完成..
+//            } catch (Throwable e) {
+//                System.out.println("------------cat e:" + e.getMessage());
+//
+//                e.printStackTrace();
+//                System.out.println("-----------end catex");
+//            }
 
 
             // Optional: print the title of the page
@@ -71,6 +56,7 @@ public class Gld2 {
             String ctnBtn = "div.backdrop-continue";
             page.waitForSelector(ctnBtn);
             Locator btn = page.locator(ctnBtn);
+           // btn.waitFor();
             btn.click();
 
             // 2. Wait for the element to appear
@@ -79,28 +65,80 @@ public class Gld2 {
 
             //  Locator element1 = page.locator("table.chart-markup-table");
             // element1.waitFor(new Locator.WaitForOptions().setTimeout(12 * 1000));
-            String targtElmt = "div#tv-chart-overlay";
-            String selector = "table.chart-markup-table";
-            Locator element1 = page.locator(targtElmt);
+         //   String targtElmt = "div#tv-chart-overlay";
+            String   targtElmt = "table.chart-markup-table";
 
-            Thread.sleep(9 * 1000); // 10 secon
+            page.evaluate("() => {" +
+                    "  const el = document.querySelector('table.chart-markup-table');" +
+                    "  if (el) el.scrollIntoView();" +
+                    "}");
+            Thread.sleep(300);
+            letVisab(page);
+
+            //  targtElmt="div.chart-gui-wrapper";
+          //  targtElmt="div.chart-container-border";
+            Locator element1 = page.locator(targtElmt);
+            System.out.println("element1.isVisible:"+element1.isVisible());
+           // element1.waitFor(new Locator.WaitForOptions().setTimeout(9 * 1000));
+           Thread.sleep(3 * 1000); // 10 secon
             System.out.println("targe elmt showed");
             //  page.waitForFunction("() => document.querySelector('canvas') && document.querySelector('canvas').clientHeight > 0");
 
 
             // 3. Take screenshot of that element
             System.out.println("start   save pic...");
-            String gldpic = "gld" + System.currentTimeMillis() + ".png";
+            mkdir("pics");
+            String gldpic = "pics/cmdt" + System.currentTimeMillis() + ".png";
             element1.screenshot(new Locator.ScreenshotOptions().setPath(Paths.get(gldpic)));
+
+        //    scrshtByElmtHdlr(page, gldpic);
 
             System.out.println("Screenshot saved as chart-element.png");
 
 
             // Keep browser open for a while to see the page
             Thread.sleep(3000 * 1000); // 10 seconds
-            browser.close();
+
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void letVisab(Page page) {
+        page.evaluate("() => {" +
+                "  const el = document.querySelector('table.chart-markup-table');" +
+                "  if (el) {" +
+                "    el.style.display = 'block';" +       // 取消 display:none
+                "    el.style.visibility = 'visible';" +  // 取消 visibility:hidden
+                "    el.style.opacity = '1';" +           // 取消透明
+                "  }" +
+                "}");
+
+        page.evaluate("() => {" +
+                "  const el = document.querySelector('table.chart-markup-table');" +
+                "  if (el) el.scrollIntoView();" +
+                "}");
+    }
+
+    /**
+     * Playwright 的 locator.screenshot() 默认会等待元素：
+     *
+     * 可见 (visible)
+     *
+     * 所有字体加载完毕
+     *
+     * 渲染完成
+     *
+     * scrshtByElmtHdlr 会跳过
+     * @param page
+     * @param gldpic
+     */
+    private static void scrshtByElmtHdlr(Page page, String gldpic) {
+        ElementHandle element = page.querySelector("table.chart-markup-table");
+        if (element != null) {
+            element.screenshot(new ElementHandle.ScreenshotOptions().setPath(Paths.get(gldpic)));
+        } else {
+            System.out.println("元素未找到，跳过截图");
         }
     }
 

@@ -2,14 +2,22 @@ package org.example;
 
 import com.microsoft.playwright.Browser;
 import com.microsoft.playwright.BrowserType;
+import com.microsoft.playwright.Page;
 import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.options.WaitUntilState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BotBroswer {
     private static Logger log ;
+    public  static void nvgt(String url, Page page) {
+        page.navigate(url,new Page.NavigateOptions()
+                .setWaitUntil(WaitUntilState.DOMCONTENTLOADED));
+    }
 
     public static Browser getBrowser4disabGpu() {
         log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
@@ -27,6 +35,11 @@ public class BotBroswer {
         log.info("endfun getBrowser4disabGpu");
         return browser;
     }
+
+    private static final int POOL_SIZE =7 ;
+    private static ExecutorService executor = Executors.newFixedThreadPool(POOL_SIZE);
+
+
 
     private static Browser getBrowser4gld() {
         Playwright playwright = Playwright.create();
@@ -62,9 +75,10 @@ public class BotBroswer {
                 "--no-sandbox",
                 "--disable-dev-shm-usage",
                 "--enable-webgl",
+                "--use-gl=desktop",
                 "--ignore-gpu-blocklist",
                 "--disable-web-security",
-                "--use-gl=desktop",
+
                 "--disable-blink-features=AutomationControlled"
         ));
         Browser browser = playwright.chromium().launch(options);

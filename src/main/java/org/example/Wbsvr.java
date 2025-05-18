@@ -88,6 +88,8 @@ public class Wbsvr {
                 .maximumSize(9)  // 最多缓存100个条目
                 .expireAfterWrite(600, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
                 .removalListener(notification ->
+                        // cache.cleanUp() 主动触发清理。
+                        //timer clearup just ok
                         System.out.println(cacheName+"移除缓存: " + notification.getKey() + " -> " + notification.getCause())
                 )
                 .build(new CacheLoader<String,Page>() {
