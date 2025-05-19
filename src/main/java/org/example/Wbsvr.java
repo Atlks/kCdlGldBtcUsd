@@ -1,5 +1,6 @@
 package org.example;
 
+// org.example.Wbsvr
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -15,9 +16,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -54,8 +61,11 @@ public class Wbsvr {
         //    iniCachePage();
 
         // Javalin app = Javalin.create().start(8888);
-
-        Javalin app = Javalin.create(getJavalinConfigCrossdmain()).start(8888);
+        Map cfgMap=getCfgMap(getPrjDir()+"/cfg/cfg.ini");
+        int port = 8888;
+        if(cfgMap.containsKey("port"))
+            port = Integer.parseInt(cfgMap.get("port").toString());
+        Javalin app = Javalin.create(getJavalinConfigCrossdmain()).start(  port);
         setCrsdmnOptionHdl(app);
 
 
@@ -90,6 +100,44 @@ public class Wbsvr {
             }
         });
 
+    }
+
+
+    /**
+     * 得到项目根目录（开发时返回项目目录，打包后返回 JAR 所在目录）
+     */
+    private static String getPrjDir() {
+        try {
+            URL targetDir = Main.class.getProtectionDomain().getCodeSource().getLocation();
+            File file = new File(targetDir.toURI());
+
+            if (file.getPath().endsWith("/classes") || file.getPath().endsWith("\\classes")) {
+                // 开发环境：target/classes → 返回上两级（到项目根目录）
+                return file.getParentFile().getParent();
+            } else {
+                // JAR 包情况：返回 JAR 所在目录
+                return file.getParent();
+            }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("获取项目目录失败", e);
+        }
+    }
+
+
+    private static Map getCfgMap(String fileName) {
+        Properties properties = new Properties();
+        Map<String, String> map = new HashMap<>();
+
+        try (FileInputStream fis = new FileInputStream(fileName)) {
+            properties.load(fis);
+            for (String key : properties.stringPropertyNames()) {
+                map.put(key, properties.getProperty(key));
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load config file: " + fileName, e);
+        }
+
+        return map;
     }
 
     private static void setCrsdmnOptionHdl(Javalin app) {
