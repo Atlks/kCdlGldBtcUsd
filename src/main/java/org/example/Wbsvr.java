@@ -1,9 +1,6 @@
 package org.example;
 
 // org.example.Wbsvr
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.microsoft.playwright.BrowserContext;
 import com.microsoft.playwright.Page;
 import io.javalin.Javalin;
@@ -26,32 +23,29 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import static org.example.BotBroswer.getBrowser4disabGpu;
-import static org.example.BotBroswer.getBrowserContextFast;
 
-import static org.example.OpenCoinMarketCap.*;
-import static org.example.Util.iniLogCfg;
+import static org.example.implt.OpenCoinMarketCap.*;
+import static org.example.ScrSnap.*;
+import static uti.Util.iniLogCfg;
 
 public class Wbsvr {
-    private static Logger log;
+    public static Logger log;
 
     static {
         iniLogCfg();
         log = LoggerFactory.getLogger(Wbsvr.class);
     }
 
-    public static BrowserContext context = getBrowserContextFast();
-
 
     //        Handler hdl2crp = ctx -> {
 //
 //
 //        };
-    static LoadingCache<String, Page> cachePage;
-    static LoadingCache<String, byte[]> cache;
+   // static LoadingCache<String, Page> cachePage;
+
 
     public static void main(String[] args) {
         iniLogCfg();
@@ -163,41 +157,8 @@ public class Wbsvr {
         };
     }
 
-    private static void iniImgCache() {
-        // 创建一个自动加载缓存
-        String cacheName = "imgCache";
-        cache = CacheBuilder.newBuilder()
-                .maximumSize(999)  // 最多缓存100个条目
-                .expireAfterWrite(120, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
-                .removalListener(notification ->
-                        System.out.println("移除缓存frm imgcache: " + notification.getKey() + " -> " + notification.getCause())
-                )
-                .build(new CacheLoader<String, byte[]>() {
-                    @Override
-                    public byte[] load(String url) throws Exception {
-                        // 模拟从数据库或外部系统加载数据
-                        log.info(cacheName + "加载数据start：" + url);
 
-                        Page page = context.newPage();
-                        byte[] imageBytes = getBytesFrmUrl(url, page);
-                        log.info(cacheName + "加载数据finish： key=" + url);
-                        return imageBytes;
-                    }
-                });
-    }
 
-    private static byte[] getBytesFrmUrl(String url, Page page) throws InterruptedException {
-        byte[] imageBytes;
-        if (url.contains("coinmarketcap"))
-            imageBytes = getBytesFrmPage4crpt(url, page);
-        else if (url.contains("baidu.com"))
-            imageBytes = FrnExch.getImgBytes(url, page);
-        else if (url.contains("cashbackforex"))
-            imageBytes = Gld2.getImgBytes(url, page);
-       else
-            imageBytes = getBytesFrmPage4crpt(url, page);
-        return imageBytes;
-    }
 
 //    private static void handleOptions(@NotNull HttpExchange exchange) throws Exception {
 //        setCrossDomain(exchange);
@@ -215,32 +176,32 @@ public class Wbsvr {
 //        exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 //        exchange.getResponseHeaders().set("Access-Control-Allow-Credentials", "true");
 //    }
-    private static void iniCachePage() {
-        // 创建一个自动加载缓存
-        String cacheName = "imgCache";
-        cachePage = CacheBuilder.newBuilder()
-                .maximumSize(9)  // 最多缓存100个条目
-                .expireAfterWrite(600, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
-                .removalListener(notification ->
-                        // cache.cleanUp() 主动触发清理。
-                        //timer clearup just ok
-                        System.out.println(cacheName + "移除缓存: " + notification.getKey() + " -> " + notification.getCause())
-                )
-                .build(new CacheLoader<String, Page>() {
-                    @Override
-                    public Page load(String k) throws Exception {
-                        // 模拟从数据库或外部系统加载数据
-                        log.info(cacheName + "加载数据start：" + k);
-                        Page pg;
-                        if (k.contains("coinmarketcap"))
-                            pg = getPage4crp();
-                        else
-                            pg = getPage4gld();
-                        log.info(cacheName + "加载数据finish： key=" + k);
-                        return pg;
-                    }
-                });
-    }
+//    private static void iniCachePage() {
+//        // 创建一个自动加载缓存
+//        String cacheName = "imgCache";
+//        cachePage = CacheBuilder.newBuilder()
+//                .maximumSize(9)  // 最多缓存100个条目
+//                .expireAfterWrite(600, TimeUnit.SECONDS)  // 缓存项在写入10秒后过期
+//                .removalListener(notification ->
+//                        // cache.cleanUp() 主动触发清理。
+//                        //timer clearup just ok
+//                        System.out.println(cacheName + "移除缓存: " + notification.getKey() + " -> " + notification.getCause())
+//                )
+//                .build(new CacheLoader<String, Page>() {
+//                    @Override
+//                    public Page load(String k) throws Exception {
+//                        // 模拟从数据库或外部系统加载数据
+//                        log.info(cacheName + "加载数据start：" + k);
+//                        Page pg;
+//                        if (k.contains("coinmarketcap"))
+//                            pg = getPage4crp();
+//                        else
+//                            pg = getPage4gld();
+//                        log.info(cacheName + "加载数据finish： key=" + k);
+//                        return pg;
+//                    }
+//                });
+//    }
 
     private static Page getPage4gld() {
         return null;

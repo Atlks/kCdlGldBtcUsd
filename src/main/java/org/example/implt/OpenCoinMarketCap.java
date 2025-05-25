@@ -1,8 +1,7 @@
-package org.example;
+package org.example.implt;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitForSelectorState;
-import com.microsoft.playwright.options.WaitUntilState;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,12 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import static com.microsoft.playwright.options.LoadState.DOMCONTENTLOADED;
 import static org.example.BotBroswer.getBrowser4disabGpu;
 import static org.example.BotBroswer.nvgt;
-import static org.example.Util.iniLogCfg;
+import static uti.Util.iniLogCfg;
 
 
 public class OpenCoinMarketCap {
@@ -46,7 +44,7 @@ public class OpenCoinMarketCap {
         Thread.sleep(300 * 1000); // 10 seconds
     }
 
-    static byte[] getBytesPicFrmCrptsite(Browser browser, String currencies) throws InterruptedException, IOException {
+    public static byte[] getBytesPicFrmCrptsite(Browser browser, String currencies) throws InterruptedException, IOException {
         log.info(" fun getBytesPicFrmCrptsite");
 
 
@@ -61,7 +59,7 @@ public class OpenCoinMarketCap {
 
     }
 
-    static byte[] getBytesFrmPage4crpt(String url, Page page) throws InterruptedException {
+    public static byte[] getBytesFrmPage4crpt(String url, Page page) throws InterruptedException {
         iniLogCfg();
         log = LoggerFactory.getLogger(OpenCoinMarketCap.class);
         nvgt(url, page);
@@ -143,7 +141,7 @@ public class OpenCoinMarketCap {
 
 
     @NotNull
-    static BrowserContext getBrowserContextFastOptmz(Browser browser) {
+    public static BrowserContext getBrowserContextFastOptmz(Browser browser) {
         //use playwright 1.48
         // 获取内置的 iPhone 12 设备配置
 

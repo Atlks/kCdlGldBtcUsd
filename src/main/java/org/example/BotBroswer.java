@@ -2,6 +2,7 @@ package org.example;
 
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.WaitUntilState;
+import org.example.implt.OpenCoinMarketCap;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +11,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import static org.example.OpenCoinMarketCap.getBrowserContextFastOptmz;
-import static org.example.Util.iniLogCfg;
+import static org.example.implt.OpenCoinMarketCap.getBrowserContextFastOptmz;
+import static uti.Util.iniLogCfg;
 
 public class BotBroswer {
     private static Logger log ;

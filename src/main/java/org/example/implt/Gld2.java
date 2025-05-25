@@ -1,15 +1,14 @@
-package org.example;
+package org.example.implt;
 
 import com.microsoft.playwright.*;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.file.Paths;
 
 import static org.example.BotBroswer.*;
-import static org.example.OpenCoinMarketCap.*;
-import static org.example.Util.iniLogCfg;
+import static org.example.implt.OpenCoinMarketCap.*;
+import static uti.Util.iniLogCfg;
 
 
 public class Gld2 {

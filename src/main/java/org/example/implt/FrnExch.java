@@ -1,4 +1,4 @@
-package org.example;
+package org.example.implt;
 
 import com.google.gson.JsonObject;
 import com.microsoft.playwright.*;
@@ -9,12 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.*;
 
 import static org.example.BotBroswer.*;
-import static org.example.OpenCoinMarketCap.*;
-import static org.example.Util.iniLogCfg;
+import static org.example.implt.OpenCoinMarketCap.*;
+import static uti.Util.iniLogCfg;
 
 
 //https://cn.investing.com/commodities/gold
@@ -68,7 +67,7 @@ public class FrnExch {
         Thread.sleep(3000 * 1000); // 10 seconds
     }
 
-    static byte[] getImgBytes(String url, Page page) throws InterruptedException {
+    public static byte[] getImgBytes(String url, Page page) throws InterruptedException {
 
         page.addInitScript("document.fonts.ready.then(() => console.log('Fonts ready'));");
 
