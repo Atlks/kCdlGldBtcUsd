@@ -66,8 +66,9 @@ public class Wbsvr {
         // http://13.212.95.142:8888/screenshotK?
         //http://13.212.95.142:8888/screenshotK?url=https%3A%2F%2Fcoinmarketcap.com%2Fcurrencies%2Fbitcoin%2F
         // http://127.0.0.1:8888/screenshotCrpt?currencies=bitcoin
+        app.get("/apiv1/screenshotK", Wbsvr::hdl2crp);
         app.get("/screenshotK", Wbsvr::hdl2crp);
-        app.get("/screenshotGld", Wbsvr::hdl2gld);
+      //  app.get("/screenshotGld", Wbsvr::hdl2gld);
 
         app.post("/upload", ctx -> {
             // 读取文本框中的保存文件名
